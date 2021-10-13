@@ -1,7 +1,7 @@
-import { Metronom, TypeMetronom } from "./app";
+import { Metronom, TMetronom } from "./app";
 
-export { Metronom, TypeMetronom }
+export { Metronom, TMetronom as TypeMetronom }
 
-export function CreateMetronom(options: TypeMetronom): Metronom {
+export function Create(options: TMetronom): Metronom {
     return new Metronom(options)
 }

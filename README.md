@@ -11,7 +11,7 @@ Starting three tasks. First and second tasks - every 2 minutes, third task - at 
 ```javascript
 import * as metronom from 'vv-metronom'
 
-const task1 = metronom.CreateMetronom({
+const task1 = metronom.Create({
     kind: 'cron',
     cron: '0 */2 * * * *'
 })
@@ -21,17 +21,17 @@ task1.onTick(() => {
 })
 task1.start()
 
-const task2 = metronom.CreateMetronom({
+const task2 = metronom.Create({
     kind: 'custom',
-    weekday_sun: true,
-    weekday_mon: true,
-    weekday_tue: true,
-    weekday_wed: true,
-    weekday_thu: true,
-    weekday_fri: true,
-    weekday_sat: true,
+    weekdaySun: true,
+    weekdayMon: true,
+    weekdayTue: true,
+    weekdayWed: true,
+    weekdayThu: true,
+    weekdayFri: true,
+    weekdaySat: true,
     periodicity: 'every',
-    period_minutes: 2
+    periodMinutes: 2
 })
 console.log(`this timetable as cron format: ${task2.cron().cron}`)
 task2.onTick(() => {
@@ -40,17 +40,17 @@ task2.onTick(() => {
 })
 task2.start()
 
-const task3 = metronom.CreateMetronom({
+const task3 = metronom.Create({
     kind: 'custom',
-    weekday_sun: true,
-    weekday_mon: true,
-    weekday_tue: true,
-    weekday_wed: true,
-    weekday_thu: true,
-    weekday_fri: true,
-    weekday_sat: true,
+    weekdaySun: true,
+    weekdayMon: true,
+    weekdayTue: true,
+    weekdayWed: true,
+    weekdayThu: true,
+    weekdayFri: true,
+    weekdaySat: true,
     periodicity: 'once',
-    period_minutes: 60 * 9
+    periodMinutes: 60 * 9
 })
 console.log(`this timetable as cron format: ${task3.cron().cron}`)
 task3.onTick(() => {

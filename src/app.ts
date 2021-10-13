@@ -1,116 +1,116 @@
 import * as schedule from 'node-schedule'
 
-export type TypeMetronom = {
+export type TMetronom = {
     kind: 'cron',
     cron: string
 } | {
     kind: 'custom',
-    weekday_sun: boolean,
-    weekday_mon: boolean,
-    weekday_tue: boolean,
-    weekday_wed: boolean,
-    weekday_thu: boolean,
-    weekday_fri: boolean,
-    weekday_sat: boolean,
-    period_minutes: number,
+    weekdaySun?: boolean,
+    weekdayMon?: boolean,
+    weekdayTue?: boolean,
+    weekdayWed?: boolean,
+    weekdayThu?: boolean,
+    weekdayFri?: boolean,
+    weekdaySat?: boolean,
+    periodMinutes: number,
     periodicity: 'every' | 'once'
 }
 
 export class Metronom {
-    private options: TypeMetronom
-    private job: schedule.Job
-    private callback_ontick: () => void
-    private allow_next_tick: boolean
+    private _options: TMetronom
+    private _job: schedule.Job
+    private _callbackOnTick: () => void
+    private _allowNextTick: boolean
 
-    constructor(options: TypeMetronom) {
-        this.allow_next_tick = true
+    constructor(options: TMetronom) {
+        this._allowNextTick = true
         if (options.kind === 'cron') {
-            this.options = {
+            this._options = {
                 kind: 'cron',
                 cron: options.cron || '0 * * * * *'
             }
         } else if (options.kind === 'custom') {
-            this.options = {
+            this._options = {
                 kind: 'custom',
-                weekday_sun: options.weekday_sun ? true: false,
-                weekday_mon: options.weekday_mon ? true: false,
-                weekday_tue: options.weekday_tue ? true: false,
-                weekday_wed: options.weekday_wed ? true: false,
-                weekday_thu: options.weekday_thu ? true: false,
-                weekday_fri: options.weekday_fri ? true: false,
-                weekday_sat: options.weekday_sat ? true: false,
-                period_minutes: !options.period_minutes || options.period_minutes < 1 || options.period_minutes > 1439 ? 60 : options.period_minutes,
+                weekdaySun: options.weekdaySun ? true: false,
+                weekdayMon: options.weekdayMon ? true: false,
+                weekdayTue: options.weekdayTue ? true: false,
+                weekdayWed: options.weekdayWed ? true: false,
+                weekdayThu: options.weekdayThu ? true: false,
+                weekdayFri: options.weekdayFri ? true: false,
+                weekdaySat: options.weekdaySat ? true: false,
+                periodMinutes: !options.periodMinutes || options.periodMinutes < 1 || options.periodMinutes > 1439 ? 60 : options.periodMinutes,
                 periodicity: options.periodicity === 'every' || options.periodicity === 'once' ? options.periodicity : 'every'
             }
         }
     }
 
     cron() : {cron: string, native: boolean} {
-        if (this.options.kind === 'cron') {
-            return {cron: this.options.cron, native: true}
+        if (this._options.kind === 'cron') {
+            return {cron: this._options.cron, native: true}
         }
 
         const second = '0'
         let minute = '*'
         let hour = '*'
-        const day_of_month = '*'
+        const dayOfMonth = '*'
         const month = '*'
-        let day_of_week = '*'
+        let dayOfWeek = '*'
 
-        if (this.options.periodicity === 'every') {
-            minute = `*/${this.options.period_minutes}`
+        if (this._options.periodicity === 'every') {
+            minute = `*/${this._options.periodMinutes}`
         } else {
-            const h = Math.floor(this.options.period_minutes / 60)
-            minute = `${this.options.period_minutes - (h * 60)}`
+            const h = Math.floor(this._options.periodMinutes / 60)
+            minute = `${this._options.periodMinutes - (h * 60)}`
             hour = `${h}`
         }
 
-        const day_of_week_list = [
-            this.options.weekday_sun === true ? 0 : undefined,
-            this.options.weekday_mon === true ? 1 : undefined,
-            this.options.weekday_tue === true ? 2 : undefined,
-            this.options.weekday_wed === true ? 3 : undefined,
-            this.options.weekday_thu === true ? 4 : undefined,
-            this.options.weekday_fri === true ? 5 : undefined,
-            this.options.weekday_sat === true ? 6 : undefined,
+        const daysOfWeek = [
+            this._options.weekdaySun === true ? 0 : undefined,
+            this._options.weekdayMon === true ? 1 : undefined,
+            this._options.weekdayTue === true ? 2 : undefined,
+            this._options.weekdayWed === true ? 3 : undefined,
+            this._options.weekdayThu === true ? 4 : undefined,
+            this._options.weekdayFri === true ? 5 : undefined,
+            this._options.weekdaySat === true ? 6 : undefined,
         ].filter(f => f)
-        if (day_of_week_list.length < 7) {
-            day_of_week = day_of_week_list.join(',')
+        if (daysOfWeek.length < 7) {
+            dayOfWeek = daysOfWeek.join(',')
         }
 
-        return {cron: `${second} ${minute} ${hour} ${day_of_month} ${month} ${day_of_week}`, native: false}
+        return {cron: `${second} ${minute} ${hour} ${dayOfMonth} ${month} ${dayOfWeek}`, native: false}
     }
 
     onTick(callback: () => void) {
-        this.callback_ontick = callback
+        this._callbackOnTick = callback
     }
 
     allowNextTick() {
-        if (!this.job) return
-        this.allow_next_tick = true
+        if (!this._job) return
+        this._allowNextTick = true
     }
 
     start(): boolean {
-        if (this.job) return true
-        this.allow_next_tick = true
-        this.job = schedule.scheduleJob(this.cron().cron, () => {
-            if (!this.allow_next_tick || !this.callback_ontick) return
-            this.allow_next_tick = false
-            this.callback_ontick()
+        if (this._job) return true
+        this._allowNextTick = true
+        this._job = schedule.scheduleJob(this.cron().cron, () => {
+            if (!this._allowNextTick || !this._callbackOnTick) return
+            this._allowNextTick = false
+            this._callbackOnTick()
         })
-        if (this.job === null) {
-            this.job = undefined
+        if (this._job === null) {
+            this._job = undefined
             return false
         }
         return true
     }
 
     stop() {
-        if (!this.job) return
-        this.allow_next_tick = false
-        this.job.removeAllListeners()
+        if (!this._job) return
+        this._allowNextTick = false
+        this._job.removeAllListeners()
         //this.job.cancel()
-        schedule.cancelJob(this.job)
-        this.job = undefined
+        schedule.cancelJob(this._job)
+        this._job = undefined
     }
 }
