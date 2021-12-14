@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import * as schedule from 'node-schedule'
 
-export type TMetronom = {
+export type TMetronomCron = {
     kind: 'cron',
     cron: string
-} | {
+}
+export type TMetronomCustom = {
     kind: 'custom',
     weekdaySun?: boolean,
     weekdayMon?: boolean,
@@ -15,6 +17,8 @@ export type TMetronom = {
     periodMinutes: number,
     periodicity: 'every' | 'once'
 }
+
+export type TMetronom = TMetronomCron | TMetronomCustom
 
 export class Metronom {
     private _options: TMetronom
