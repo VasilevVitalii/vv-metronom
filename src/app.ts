@@ -77,7 +77,7 @@ export class Metronom {
             this._options.weekdayThu === true ? 4 : undefined,
             this._options.weekdayFri === true ? 5 : undefined,
             this._options.weekdaySat === true ? 6 : undefined,
-        ].filter(f => f)
+        ].filter(f => f !== undefined)
         if (daysOfWeek.length < 7) {
             dayOfWeek = daysOfWeek.join(',')
         }

@@ -61,6 +61,30 @@ task3.onTick(() => {
 })
 task3.start()
 
+let task4Count = 0
+const task4 = metronom.Create({
+    kind: 'custom',
+    weekdaySun: true,
+    weekdayMon: (new Date()).getDay() === 1 ? true : false,
+    weekdayTue: (new Date()).getDay() === 2 ? true : false,
+    weekdayWed: true,
+    weekdayThu: true,
+    weekdayFri: true,
+    weekdaySat: true,
+    periodicity: 'every',
+    periodMinutes: 1
+})
+task4.onTick(() => {
+    task4Count++
+    console.log(`task4 tick ${task4Count}`)
+    if (task4Count < 3) {
+        task4.allowNextTick()
+    } else {
+        task4.stop()
+    }
+})
+task4.start()
+
 const min4 = 4 * 60 * 1000
 
 setTimeout(() => {
@@ -74,6 +98,10 @@ setTimeout(() => {
     if (task3Count !== 1) {
         errors.push(`task3_count !== 1, task3_count === ${task3Count}`)
     }
+    if (task4Count !== 3) {
+        errors.push(`task4_count !== 3, task4_count === ${task4Count}`)
+    }
+
     if (errors.length <= 0) {
         console.log(`TEST DONE, IF PROCESS NOT STOPPED - ERROR!`)
     }
