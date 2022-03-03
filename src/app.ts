@@ -64,8 +64,12 @@ export class Metronom {
 
     start(): boolean {
         if (this._job) return true
+        const cron = this.cron().cron
+        if (!cron) {
+            return false
+        }
         this._allowNextTick = true
-        this._job = schedule.scheduleJob(this.cron().cron, () => {
+        this._job = schedule.scheduleJob(cron, () => {
             if (!this._allowNextTick || !this._callbackOnTick) return
             this._allowNextTick = false
             this._callbackOnTick()
