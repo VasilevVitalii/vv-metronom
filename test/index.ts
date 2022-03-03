@@ -1,4 +1,31 @@
+import { TMetronom } from '../src/app'
 import * as metronom from '../src/index'
+
+
+const defMetronom: TMetronom = {kind: 'custom', periodicity: 'every', periodMinutes: 4, weekdaySun: true, weekdayMon: true, weekdayTue: true, weekdayWed: true, weekdayThu: true, weekdayFri: true, weekdaySat: true}
+
+const testCron: {metronom: TMetronom, cron: string}[] = [
+    {metronom: defMetronom, cron: '0 */4 * * * *'},
+    {metronom: {...defMetronom, weekdayMon: false, weekdayTue: false, weekdayWed: false, weekdayThu: false, weekdayFri: false, weekdaySat: false}, cron: '0 */4 * * * 0'},
+    {metronom: {...defMetronom,  weekdaySun: false, weekdayMon: false, weekdayTue: false, weekdayWed: false, weekdayThu: false, weekdayFri: false}, cron: '0 */4 * * * 6'},
+    {metronom: {...defMetronom,  weekdaySun: false, weekdayMon: false, weekdayWed: false, weekdayThu: false, weekdayFri: false}, cron: '0 */4 * * * 2,6'},
+    {metronom: {...defMetronom,  weekdayTue: false}, cron: '0 */4 * * * 0,1,3-6'},
+    {metronom: {...defMetronom,  weekdayTue: false, weekdayThu: false}, cron: '0 */4 * * * 0,1,3,5,6'},
+    {metronom: {...defMetronom,  weekdaySun: false, weekdaySat: false}, cron: '0 */4 * * * 1-5'},
+    {metronom: {...defMetronom,  weekdayWed: false}, cron: '0 */4 * * * 0-2,4-6'},
+]
+
+let isCronError = false
+testCron.forEach((c, i) => {
+    const test = metronom.Cron(c.metronom)
+    if (test.cron !== c.cron) {
+        isCronError = true
+        console.warn(`error test cron #${i}, result "${test.cron}", need = "${c.cron}"`)
+    }
+})
+if (isCronError) {
+    process.exit()
+}
 
 let task1Count = 0
 const task1 = metronom.Create({
