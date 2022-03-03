@@ -13,6 +13,7 @@ const testCron: {metronom: TMetronom, cron: string}[] = [
     {metronom: {...defMetronom,  weekdayTue: false, weekdayThu: false}, cron: '0 */4 * * * 0,1,3,5,6'},
     {metronom: {...defMetronom,  weekdaySun: false, weekdaySat: false}, cron: '0 */4 * * * 1-5'},
     {metronom: {...defMetronom,  weekdayWed: false}, cron: '0 */4 * * * 0-2,4-6'},
+    {metronom: {...defMetronom,  weekdaySun: false, weekdayMon: false, weekdayTue: false, weekdayWed: false, weekdayThu: false, weekdayFri: false, weekdaySat: false}, cron: undefined},
 ]
 
 let isCronError = false

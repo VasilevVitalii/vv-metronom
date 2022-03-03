@@ -123,7 +123,7 @@ export function Cron(metronom: TMetronom): {cron: string, native: boolean} {
             metronom.weekdayFri === true ? 5 : undefined,
             metronom.weekdaySat === true ? 6 : undefined,
         ].filter(f => f !== undefined)
-        if (dayOfWeek.length <= 0) {
+        if (daysOfWeek.length <= 0) {
             return {cron: undefined, native: false}
         }
         if (daysOfWeek.length < 7) {
