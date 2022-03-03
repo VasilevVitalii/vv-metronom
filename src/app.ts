@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import * as schedule from 'node-schedule'
+import * as vv from 'vv-common'
 
 export type TMetronomCron = {
     kind: 'cron',
@@ -97,6 +98,10 @@ export function Cron(metronom: TMetronom): {cron: string, native: boolean} {
     if (metronom.kind === 'cron') {
         return {cron: metronom.cron, native: true}
     } else if (metronom.kind === 'custom') {
+        const periodMinutes = vv.nz(vv.toInt(metronom.periodMinutes), 0)
+        if (periodMinutes <= 0) {
+            return {cron: undefined, native: false}
+        }
         const second = '0'
         let minute = '*'
         let hour = '*'
@@ -105,10 +110,10 @@ export function Cron(metronom: TMetronom): {cron: string, native: boolean} {
         let dayOfWeek = '*'
 
         if (metronom.periodicity === 'every') {
-            minute = `*/${metronom.periodMinutes}`
+            minute = `*/${periodMinutes}`
         } else if (metronom.periodicity === 'once') {
-            const h = Math.floor(metronom.periodMinutes / 60)
-            minute = `${metronom.periodMinutes - (h * 60)}`
+            const h = Math.floor(periodMinutes / 60)
+            minute = `${periodMinutes - (h * 60)}`
             hour = `${h}`
         } else {
             return {cron: undefined, native: false}
