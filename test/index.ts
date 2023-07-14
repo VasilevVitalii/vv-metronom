@@ -1,7 +1,6 @@
 import { TMetronom } from '../src/app'
 import * as metronom from '../src/index'
 
-
 const defMetronom: TMetronom = {kind: 'custom', periodicity: 'every', periodMinutes: 4, weekdaySun: true, weekdayMon: true, weekdayTue: true, weekdayWed: true, weekdayThu: true, weekdayFri: true, weekdaySat: true}
 
 const testCron: {metronom: TMetronom, cron: string}[] = [

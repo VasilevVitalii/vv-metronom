@@ -27,8 +27,7 @@ export class Metronom {
     private _callbackOnTick: () => void
     private _allowNextTick: boolean
 
-    constructor(options: TMetronom) {
-        this._allowNextTick = true
+    private _setOptions(options: TMetronom) {
         if (options.kind === 'cron') {
             this._options = {
                 kind: 'cron',
@@ -50,6 +49,11 @@ export class Metronom {
         }
     }
 
+    constructor(options: TMetronom) {
+        this._allowNextTick = true
+        this._setOptions(options)
+    }
+
     cron() : {cron: string, native: boolean} {
         return Cron(this._options)
     }
@@ -61,6 +65,14 @@ export class Metronom {
     allowNextTick() {
         if (!this._job) return
         this._allowNextTick = true
+    }
+
+    changeOptions(options: TMetronom) {
+        const isWorked = this._job !== undefined
+        if (isWorked) this.stop()
+        this._allowNextTick = true
+        this._setOptions(options)
+        if (isWorked) this.start()
     }
 
     start(): boolean {
